@@ -1,0 +1,2280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Office Portal - Enhanced System</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Login Screen Styles */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 50px;
+            max-width: 450px;
+            width: 100%;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-header .logo {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .login-header h1 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #7f8c8d;
+            font-size: 1em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c00;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c00;
+            font-size: 0.9em;
+        }
+
+        .info-message {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #1976d2;
+            font-size: 0.9em;
+        }
+
+        .setup-admin {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .setup-admin h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        /* Main Application Styles */
+        .app-container {
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .top-nav {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 0 30px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.5em;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+        }
+
+        .btn-logout {
+            background: rgba(231, 76, 60, 0.9);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #c0392b;
+        }
+
+        .main-content {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .dashboard-header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-header p {
+            color: #7f8c8d;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.95em;
+        }
+
+        .content-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .section-header h2 {
+            color: #2c3e50;
+            font-size: 1.5em;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .patient-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .patient-card {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .patient-card:hover {
+            background: #e8f4f8;
+            transform: translateX(5px);
+        }
+
+        .patient-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #667eea;
+            background: #ecf0f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: #7f8c8d;
+        }
+
+        .patient-info {
+            flex: 1;
+        }
+
+        .patient-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .patient-details {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .patient-details span {
+            margin-right: 15px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            margin: 20px;
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 2em;
+            font-weight: bold;
+            color: #95a5a6;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #e74c3c;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-field.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-field label {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .form-field input,
+        .form-field select,
+        .form-field textarea {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-field input:focus,
+        .form-field select:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-field textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .photo-upload-section {
+            text-align: center;
+            padding: 20px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 12px;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .photo-upload-section:hover {
+            border-color: #667eea;
+            background: #f0f3ff;
+        }
+
+        .photo-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 15px;
+            border: 4px solid #667eea;
+        }
+
+        .photo-placeholder {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: #ecf0f1;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            color: #7f8c8d;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .form-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .info-item {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 15px;
+        }
+
+        .info-item label {
+            display: block;
+            color: #7f8c8d;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-item .value {
+            color: #2c3e50;
+            font-size: 1.05em;
+            font-weight: 500;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #7f8c8d;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab:hover {
+            color: #667eea;
+        }
+
+        .prescription-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #27ae60;
+            margin-bottom: 15px;
+        }
+
+        .prescription-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .prescription-medication {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .prescription-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .prescription-status.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .prescription-status.expired {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .prescription-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .prescription-detail {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .prescription-detail label {
+            display: block;
+            color: #7f8c8d;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+
+        .prescription-detail .value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .pharmacy-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #3498db;
+            margin-bottom: 15px;
+        }
+
+        .pharmacy-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .pharmacy-details {
+            color: #7f8c8d;
+        }
+
+        .pharmacy-details p {
+            margin: 5px 0;
+        }
+
+        .medical-record-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #9b59b6;
+            margin-bottom: 15px;
+        }
+
+        .medical-record-item h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .record-meta {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .medical-record-item p {
+            margin: 8px 0;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .notification {
+            position: fixed;
+            top: 90px;
+            right: 30px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            animation: slideInRight 0.3s ease;
+            z-index: 1001;
+            font-weight: 600;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .notification.error {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .notification.info {
+            background: #3498db;
+            color: white;
+        }
+
+        .user-management-list {
+            margin-top: 30px;
+        }
+
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #95a5a6;
+        }
+
+        .user-item.admin {
+            border-left-color: #f39c12;
+            background: #fef9e7;
+        }
+
+        .user-item-info h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .user-item-info p {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .history-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .history-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .history-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .history-item {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-item .date {
+            color: #7f8c8d;
+            font-size: 0.85em;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function App() {
+            const [isLoggedIn, setIsLoggedIn] = useState(false);
+            const [currentUser, setCurrentUser] = useState(null);
+            const [users, setUsers] = useState([]);
+            const [patients, setPatients] = useState([]);
+            const [selectedPatient, setSelectedPatient] = useState(null);
+            const [showPatientModal, setShowPatientModal] = useState(false);
+            const [showUserModal, setShowUserModal] = useState(false);
+            const [notification, setNotification] = useState(null);
+            const [searchTerm, setSearchTerm] = useState('');
+            const [activeTab, setActiveTab] = useState('overview');
+            const [loginForm, setLoginForm] = useState({ username: '', password: '' });
+            const [setupMode, setSetupMode] = useState(false);
+            const [error, setError] = useState('');
+
+            const [newPatientForm, setNewPatientForm] = useState({
+                firstName: '',
+                lastName: '',
+                dateOfBirth: '',
+                gender: '',
+                phone: '',
+                email: '',
+                address: '',
+                emergencyContact: '',
+                emergencyPhone: '',
+                bloodType: '',
+                allergies: '',
+                currentMedications: '',
+                chronicConditions: '',
+                preferredPharmacy: '',
+                photo: ''
+            });
+
+            const [formData, setFormData] = useState({
+                chiefComplaint: '',
+                diagnosis: '',
+                treatment: '',
+                prescription: '',
+                notes: '',
+                followUpDate: ''
+            });
+
+            const [prescriptionForm, setPrescriptionForm] = useState({
+                medication: '',
+                dosage: '',
+                frequency: '',
+                duration: '',
+                refills: '',
+                instructions: ''
+            });
+
+            const [pharmacyForm, setPharmacyForm] = useState({
+                name: '',
+                address: '',
+                phone: '',
+                fax: ''
+            });
+
+            const [newUserForm, setNewUserForm] = useState({
+                username: '',
+                password: '',
+                name: '',
+                role: 'staff'
+            });
+
+            const [appointmentForm, setAppointmentForm] = useState({
+                date: '',
+                time: '',
+                type: '',
+                reason: '',
+                status: 'scheduled'
+            });
+
+            useEffect(() => {
+                const storedUsers = localStorage.getItem('medicalUsers');
+                const storedPatients = localStorage.getItem('patients');
+                
+                if (storedUsers) {
+                    setUsers(JSON.parse(storedUsers));
+                } else {
+                    setSetupMode(true);
+                }
+
+                if (storedPatients) {
+                    setPatients(JSON.parse(storedPatients));
+                }
+            }, []);
+
+            const showNotification = (message, type = 'success') => {
+                setNotification({ message, type });
+                setTimeout(() => setNotification(null), 3000);
+            };
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                const user = users.find(u => u.username === loginForm.username && u.password === loginForm.password);
+                
+                if (user) {
+                    setCurrentUser(user);
+                    setIsLoggedIn(true);
+                    setError('');
+                } else {
+                    setError('Invalid username or password');
+                }
+            };
+
+            const setupAdmin = (e) => {
+                e.preventDefault();
+                const adminUser = {
+                    username: 'admin',
+                    password: 'admin123',
+                    name: 'System Administrator',
+                    role: 'admin'
+                };
+                
+                const newUsers = [adminUser];
+                setUsers(newUsers);
+                localStorage.setItem('medicalUsers', JSON.stringify(newUsers));
+                setSetupMode(false);
+                showNotification('Admin account created successfully!', 'success');
+            };
+
+            const handleLogout = () => {
+                setIsLoggedIn(false);
+                setCurrentUser(null);
+                setSelectedPatient(null);
+                setLoginForm({ username: '', password: '' });
+            };
+
+            const handleInputChange = (e) => {
+                setFormData({
+                    ...formData,
+                    [e.target.name]: e.target.value
+                });
+            };
+
+            const handlePhotoUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        setNewPatientForm({
+                            ...newPatientForm,
+                            photo: reader.result
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const addPatient = (e) => {
+                e.preventDefault();
+                
+                const newPatient = {
+                    id: Date.now(),
+                    ...newPatientForm,
+                    registrationDate: new Date().toISOString(),
+                    medicalRecords: [],
+                    prescriptions: [],
+                    pharmacies: [],
+                    appointments: [],
+                    medicalHistory: {
+                        surgeries: [],
+                        immunizations: [],
+                        familyHistory: []
+                    }
+                };
+
+                const updatedPatients = [...patients, newPatient];
+                setPatients(updatedPatients);
+                localStorage.setItem('patients', JSON.stringify(updatedPatients));
+                
+                setNewPatientForm({
+                    firstName: '',
+                    lastName: '',
+                    dateOfBirth: '',
+                    gender: '',
+                    phone: '',
+                    email: '',
+                    address: '',
+                    emergencyContact: '',
+                    emergencyPhone: '',
+                    bloodType: '',
+                    allergies: '',
+                    currentMedications: '',
+                    chronicConditions: '',
+                    preferredPharmacy: '',
+                    photo: ''
+                });
+                
+                setShowPatientModal(false);
+                showNotification('Patient added successfully!');
+            };
+
+            const addMedicalRecord = () => {
+                if (!formData.diagnosis && !formData.chiefComplaint) {
+                    showNotification('Please enter at least a diagnosis or chief complaint', 'error');
+                    return;
+                }
+
+                const record = {
+                    id: Date.now(),
+                    date: new Date().toISOString(),
+                    recordedBy: currentUser.name,
+                    ...formData
+                };
+
+                const updatedPatient = {
+                    ...selectedPatient,
+                    medicalRecords: [...(selectedPatient.medicalRecords || []), record]
+                };
+
+                updatePatient(updatedPatient);
+                
+                setFormData({
+                    chiefComplaint: '',
+                    diagnosis: '',
+                    treatment: '',
+                    prescription: '',
+                    notes: '',
+                    followUpDate: ''
+                });
+
+                showNotification('Medical record added successfully!');
+            };
+
+            const addPrescription = (e) => {
+                e.preventDefault();
+                
+                const prescription = {
+                    id: Date.now(),
+                    ...prescriptionForm,
+                    prescribedBy: currentUser.name,
+                    prescribedDate: new Date().toISOString(),
+                    status: 'active',
+                    pharmacy: selectedPatient.preferredPharmacy || 'Not specified'
+                };
+
+                const updatedPatient = {
+                    ...selectedPatient,
+                    prescriptions: [...(selectedPatient.prescriptions || []), prescription]
+                };
+
+                updatePatient(updatedPatient);
+                
+                setPrescriptionForm({
+                    medication: '',
+                    dosage: '',
+                    frequency: '',
+                    duration: '',
+                    refills: '',
+                    instructions: ''
+                });
+
+                showNotification('Prescription added successfully!');
+            };
+
+            const addPharmacy = (e) => {
+                e.preventDefault();
+                
+                const pharmacy = {
+                    id: Date.now(),
+                    ...pharmacyForm,
+                    addedDate: new Date().toISOString()
+                };
+
+                const updatedPatient = {
+                    ...selectedPatient,
+                    pharmacies: [...(selectedPatient.pharmacies || []), pharmacy],
+                    preferredPharmacy: pharmacy.name
+                };
+
+                updatePatient(updatedPatient);
+                
+                setPharmacyForm({
+                    name: '',
+                    address: '',
+                    phone: '',
+                    fax: ''
+                });
+
+                showNotification('Pharmacy added successfully!');
+            };
+
+            const addAppointment = (e) => {
+                e.preventDefault();
+                
+                const appointment = {
+                    id: Date.now(),
+                    ...appointmentForm,
+                    scheduledBy: currentUser.name,
+                    createdDate: new Date().toISOString()
+                };
+
+                const updatedPatient = {
+                    ...selectedPatient,
+                    appointments: [...(selectedPatient.appointments || []), appointment]
+                };
+
+                updatePatient(updatedPatient);
+                
+                setAppointmentForm({
+                    date: '',
+                    time: '',
+                    type: '',
+                    reason: '',
+                    status: 'scheduled'
+                });
+
+                showNotification('Appointment scheduled successfully!');
+            };
+
+            const updateAppointmentStatus = (appointmentId, newStatus) => {
+                const updatedAppointments = selectedPatient.appointments.map(apt =>
+                    apt.id === appointmentId ? { ...apt, status: newStatus } : apt
+                );
+
+                const updatedPatient = {
+                    ...selectedPatient,
+                    appointments: updatedAppointments
+                };
+
+                updatePatient(updatedPatient);
+                showNotification(`Appointment ${newStatus}!`, 'info');
+            };
+
+            const updatePatient = (updatedPatient) => {
+                const updatedPatients = patients.map(p => 
+                    p.id === updatedPatient.id ? updatedPatient : p
+                );
+                setPatients(updatedPatients);
+                setSelectedPatient(updatedPatient);
+                localStorage.setItem('patients', JSON.stringify(updatedPatients));
+            };
+
+            const deletePatient = (patientId) => {
+                if (window.confirm('Are you sure you want to delete this patient? This action cannot be undone.')) {
+                    const updatedPatients = patients.filter(p => p.id !== patientId);
+                    setPatients(updatedPatients);
+                    localStorage.setItem('patients', JSON.stringify(updatedPatients));
+                    setSelectedPatient(null);
+                    showNotification('Patient deleted successfully', 'info');
+                }
+            };
+
+            const addNewUser = (e) => {
+                e.preventDefault();
+                
+                if (users.find(u => u.username === newUserForm.username)) {
+                    showNotification('Username already exists', 'error');
+                    return;
+                }
+
+                const newUser = { ...newUserForm };
+                const updatedUsers = [...users, newUser];
+                setUsers(updatedUsers);
+                localStorage.setItem('medicalUsers', JSON.stringify(updatedUsers));
+                
+                setNewUserForm({
+                    username: '',
+                    password: '',
+                    name: '',
+                    role: 'staff'
+                });
+
+                showNotification('User added successfully!');
+            };
+
+            const deleteUser = (username) => {
+                if (window.confirm('Are you sure you want to delete this user?')) {
+                    const updatedUsers = users.filter(u => u.username !== username);
+                    setUsers(updatedUsers);
+                    localStorage.setItem('medicalUsers', JSON.stringify(updatedUsers));
+                    showNotification('User deleted successfully', 'info');
+                }
+            };
+
+            const filteredPatients = patients.filter(patient => {
+                const searchLower = searchTerm.toLowerCase();
+                return (
+                    patient.firstName.toLowerCase().includes(searchLower) ||
+                    patient.lastName.toLowerCase().includes(searchLower) ||
+                    patient.phone.includes(searchTerm)
+                );
+            });
+
+            if (!isLoggedIn) {
+                return (
+                    <div className="login-container">
+                        <div className="login-box">
+                            <div className="login-header">
+                                <div className="logo">🏥</div>
+                                <h1>Medical Portal</h1>
+                                <p>Secure Healthcare Management System</p>
+                            </div>
+
+                            {setupMode ? (
+                                <div className="setup-admin">
+                                    <h3>🔧 Initial Setup Required</h3>
+                                    <p style={{marginBottom: '15px', color: '#856404'}}>
+                                        No admin account found. Click below to create the default admin account.
+                                    </p>
+                                    <div className="info-message">
+                                        <strong>Default Credentials:</strong><br/>
+                                        Username: admin<br/>
+                                        Password: admin123<br/>
+                                        <em>Please change these after first login!</em>
+                                    </div>
+                                    <button className="btn-login" onClick={setupAdmin}>
+                                        Create Admin Account
+                                    </button>
+                                </div>
+                            ) : (
+                                <form onSubmit={handleLogin}>
+                                    {error && <div className="error-message">{error}</div>}
+                                    
+                                    <div className="form-group">
+                                        <label>Username</label>
+                                        <input
+                                            type="text"
+                                            value={loginForm.username}
+                                            onChange={(e) => setLoginForm({...loginForm, username: e.target.value})}
+                                            required
+                                            autoComplete="username"
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>Password</label>
+                                        <input
+                                            type="password"
+                                            value={loginForm.password}
+                                            onChange={(e) => setLoginForm({...loginForm, password: e.target.value})}
+                                            required
+                                            autoComplete="current-password"
+                                        />
+                                    </div>
+
+                                    <button type="submit" className="btn-login">
+                                        🔐 Sign In
+                                    </button>
+
+                                    <div className="info-message" style={{marginTop: '20px'}}>
+                                        <strong>Demo Credentials:</strong><br/>
+                                        Username: admin | Password: admin123
+                                    </div>
+                                </form>
+                            )}
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="app-container">
+                    <nav className="top-nav">
+                        <div className="nav-left">
+                            <div className="logo-section">
+                                <span>🏥</span>
+                                <span>Medical Portal</span>
+                            </div>
+                        </div>
+                        <div className="nav-right">
+                            <div className="user-info">
+                                <span>👤 {currentUser.name}</span>
+                                <span style={{opacity: 0.7}}>({currentUser.role})</span>
+                            </div>
+                            {currentUser.role === 'admin' && (
+                                <button className="btn btn-secondary" onClick={() => setShowUserModal(true)}>
+                                    👥 Users
+                                </button>
+                            )}
+                            <button className="btn-logout" onClick={handleLogout}>
+                                🚪 Logout
+                            </button>
+                        </div>
+                    </nav>
+
+                    <div className="main-content">
+                        <div className="dashboard-header">
+                            <h1>👋 Welcome, {currentUser.name}</h1>
+                            <p>Manage patient records, prescriptions, and medical history</p>
+                        </div>
+
+                        <div className="stats-grid">
+                            <div className="stat-card">
+                                <div className="stat-icon">👥</div>
+                                <div className="stat-value">{patients.length}</div>
+                                <div className="stat-label">Total Patients</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-icon">📅</div>
+                                <div className="stat-value">
+                                    {patients.reduce((sum, p) => sum + (p.appointments?.filter(a => a.status === 'scheduled').length || 0), 0)}
+                                </div>
+                                <div className="stat-label">Upcoming Appointments</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-icon">💊</div>
+                                <div className="stat-value">
+                                    {patients.reduce((sum, p) => sum + (p.prescriptions?.length || 0), 0)}
+                                </div>
+                                <div className="stat-label">Active Prescriptions</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-icon">📝</div>
+                                <div className="stat-value">
+                                    {patients.reduce((sum, p) => sum + (p.medicalRecords?.length || 0), 0)}
+                                </div>
+                                <div className="stat-label">Medical Records</div>
+                            </div>
+                        </div>
+
+                        <div className="content-section">
+                            <div className="section-header">
+                                <h2>📋 Patient Records</h2>
+                                <button className="btn btn-primary" onClick={() => setShowPatientModal(true)}>
+                                    ➕ New Patient
+                                </button>
+                            </div>
+
+                            <input
+                                type="text"
+                                className="search-box"
+                                placeholder="🔍 Search patients by name or phone..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+
+                            <div className="patient-list">
+                                {filteredPatients.length > 0 ? (
+                                    filteredPatients.map(patient => (
+                                        <div key={patient.id} className="patient-card" onClick={() => setSelectedPatient(patient)}>
+                                            {patient.photo ? (
+                                                <img src={patient.photo} alt={patient.firstName} className="patient-photo" />
+                                            ) : (
+                                                <div className="patient-photo">
+                                                    {patient.firstName[0]}{patient.lastName[0]}
+                                                </div>
+                                            )}
+                                            <div className="patient-info">
+                                                <div className="patient-name">
+                                                    {patient.firstName} {patient.lastName}
+                                                </div>
+                                                <div className="patient-details">
+                                                    <span>📅 {patient.dateOfBirth}</span>
+                                                    <span>📞 {patient.phone}</span>
+                                                    <span>🩸 {patient.bloodType}</span>
+                                                    {patient.allergies && <span style={{color: '#e74c3c'}}>⚠️ Allergies</span>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div style={{textAlign: 'center', padding: '40px', color: '#95a5a6'}}>
+                                        <div style={{fontSize: '3em', marginBottom: '15px'}}>🔍</div>
+                                        <p>No patients found</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Add Patient Modal */}
+                    <div className={`modal ${showPatientModal ? 'active' : ''}`}>
+                        <div className="modal-content">
+                            <span className="modal-close" onClick={() => setShowPatientModal(false)}>×</span>
+                            <h2>➕ Add New Patient</h2>
+                            
+                            <form onSubmit={addPatient}>
+                                <div className="form-field full-width">
+                                    <label>Patient Photo</label>
+                                    <div className="photo-upload-section" onClick={() => document.getElementById('photoInput').click()}>
+                                        {newPatientForm.photo ? (
+                                            <img src={newPatientForm.photo} alt="Patient" className="photo-preview" />
+                                        ) : (
+                                            <div className="photo-placeholder">📷</div>
+                                        )}
+                                        <p style={{color: '#7f8c8d'}}>Click to upload photo</p>
+                                    </div>
+                                    <input
+                                        id="photoInput"
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handlePhotoUpload}
+                                        style={{display: 'none'}}
+                                    />
+                                </div>
+
+                                <div className="form-grid">
+                                    <div className="form-field">
+                                        <label>First Name *</label>
+                                        <input
+                                            type="text"
+                                            value={newPatientForm.firstName}
+                                            onChange={(e) => setNewPatientForm({...newPatientForm, firstName: e.target.value})}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-field">
+                                        <label>Last Name *</label>
+                                        <input
+                                            type="text"
+                                            value={newPatientForm.lastName}
+                                            onChange={(e) => setNewPatientForm({...newPatientForm, lastName: e.target.value})}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-field">
+                                        <label>Date of Birth *</label>
+                                        <input
+                                            type="date"
+                                            value={newPatientForm.dateOfBirth}
+                                            onChange={(e) => setNewPatientForm({...newPatientForm, dateOfBirth: e.target.value})}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-field">
+                                        <label>Gender *</label>
+                                        <select
+                                            value={newPatientForm.gender}
+                                            onChange={(e) => setNewPatientForm({...newPatientForm, gender: e.target.value})}
+                                            required
+                                        >
+                                            <option value="">Select...</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div className="form-field">
+                                        <label>Blood Type</label>
+                                        <select
+                                            value={newPatientForm.bloodType}
+                                            onChange={(e) => setNewPatientForm({...newPatientForm, bloodType: e.target.value})}
+                                        >
+                                            <option value="">Select...</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A-">A-</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B-">B-</option>
+                                            <option value="AB+">AB+</option>
+                                            <option value="AB-">AB-</option>
+                                            <option value="O+">O+</option>
+                                            <option value="O-">O-</option>
+                                        </select>
+                                    </div>
+                                    <div className="form-field">
+                                        <label>Phone *</label>
+                                        <input
+                                            type="tel"
+                                            value={newPatientForm.phone}
+                                            onChange={(e) => setNewPatientForm({...newPatientForm, phone: e.target.value})}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-field">
+                                        <label>Email</label>
+                                        <input
+                                            type="email"
+                                            value={newPatientForm.email}
+                                            onChange={(e) => setNewPatientForm({...newPatientForm, email: e.target.value})}
+                                        />
+                                    </div>
+                                    <div className="form-field full-width">
+                                        <label>Address</label>
+                                        <input
+                                            type="text"
+                                            value={newPatientForm.address}
+                                            onChange={(e) => setNewPatientForm({...newPatientForm, address: e.target.value})}
+                                        />
+                                    </div>
+                                    <div className="form-field">
+                                        <label>Emergency Contact</label>
+                                        <input
+                                            type="text"
+                                            value={newPatientForm.emergencyContact}
+                                            onChange={(e) => setNewPatientForm({...newPatientForm, emergencyContact: e.target.value})}
+                                        />
+                                    </div>
+                                    <div className="form-field">
+                                        <label>Emergency Phone</label>
+                                        <input
+                                            type="tel"
+                                            value={newPatientForm.emergencyPhone}
+                                            onChange={(e) => setNewPatientForm({...newPatientForm, emergencyPhone: e.target.value})}
+                                        />
+                                    </div>
+                                    <div className="form-field full-width">
+                                        <label>Allergies</label>
+                                        <textarea
+                                            value={newPatientForm.allergies}
+                                            onChange={(e) => setNewPatientForm({...newPatientForm, allergies: e.target.value})}
+                                            placeholder="List any known allergies..."
+                                        />
+                                    </div>
+                                    <div className="form-field full-width">
+                                        <label>Current Medications</label>
+                                        <textarea
+                                            value={newPatientForm.currentMedications}
+                                            onChange={(e) => setNewPatientForm({...newPatientForm, currentMedications: e.target.value})}
+                                            placeholder="List current medications..."
+                                        />
+                                    </div>
+                                    <div className="form-field full-width">
+                                        <label>Chronic Conditions</label>
+                                        <textarea
+                                            value={newPatientForm.chronicConditions}
+                                            onChange={(e) => setNewPatientForm({...newPatientForm, chronicConditions: e.target.value})}
+                                            placeholder="List any chronic conditions..."
+                                        />
+                                    </div>
+                                </div>
+
+                                <button type="submit" className="btn btn-success" style={{marginTop: '20px', width: '100%'}}>
+                                    ➕ Add Patient
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {/* Patient Details Modal */}
+                    <div className={`modal ${selectedPatient && !showPatientModal ? 'active' : ''}`}>
+                        <div className="modal-content" style={{maxWidth: '1100px'}}>
+                            {selectedPatient && (
+                                <div>
+                                    <span className="modal-close" onClick={() => setSelectedPatient(null)}>×</span>
+                                    
+                                    <div style={{display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '30px'}}>
+                                        {selectedPatient.photo ? (
+                                            <img src={selectedPatient.photo} alt={selectedPatient.firstName} 
+                                                style={{width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: '4px solid #667eea'}} />
+                                        ) : (
+                                            <div style={{width: '100px', height: '100px', borderRadius: '50%', background: '#ecf0f1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2.5em', color: '#7f8c8d'}}>
+                                                {selectedPatient.firstName[0]}{selectedPatient.lastName[0]}
+                                            </div>
+                                        )}
+                                        <div style={{flex: 1}}>
+                                            <h2 style={{marginBottom: '5px'}}>{selectedPatient.firstName} {selectedPatient.lastName}</h2>
+                                            <p style={{color: '#7f8c8d'}}>Patient ID: {selectedPatient.id}</p>
+                                        </div>
+                                        <button className="btn btn-danger" onClick={() => deletePatient(selectedPatient.id)}>
+                                            🗑️ Delete Patient
+                                        </button>
+                                    </div>
+
+                                    <div className="tabs">
+                                        <button className={`tab ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')}>
+                                            📋 Overview
+                                        </button>
+                                        <button className={`tab ${activeTab === 'appointments' ? 'active' : ''}`} onClick={() => setActiveTab('appointments')}>
+                                            📅 Appointments
+                                        </button>
+                                        <button className={`tab ${activeTab === 'prescriptions' ? 'active' : ''}`} onClick={() => setActiveTab('prescriptions')}>
+                                            💊 Prescriptions
+                                        </button>
+                                        <button className={`tab ${activeTab === 'pharmacy' ? 'active' : ''}`} onClick={() => setActiveTab('pharmacy')}>
+                                            🏪 Pharmacy
+                                        </button>
+                                        <button className={`tab ${activeTab === 'history' ? 'active' : ''}`} onClick={() => setActiveTab('history')}>
+                                            📚 Medical History
+                                        </button>
+                                        <button className={`tab ${activeTab === 'visits' ? 'active' : ''}`} onClick={() => setActiveTab('visits')}>
+                                            🏥 Visit Records
+                                        </button>
+                                    </div>
+
+                                    {activeTab === 'overview' && (
+                                        <div>
+                                            <div className="form-section">
+                                                <h2>Personal Information</h2>
+                                                <div className="form-grid">
+                                                    <div className="info-item">
+                                                        <label>Date of Birth</label>
+                                                        <div className="value">{selectedPatient.dateOfBirth}</div>
+                                                    </div>
+                                                    <div className="info-item">
+                                                        <label>Gender</label>
+                                                        <div className="value">{selectedPatient.gender}</div>
+                                                    </div>
+                                                    <div className="info-item">
+                                                        <label>Blood Type</label>
+                                                        <div className="value">{selectedPatient.bloodType || 'N/A'}</div>
+                                                    </div>
+                                                    <div className="info-item">
+                                                        <label>Phone</label>
+                                                        <div className="value">{selectedPatient.phone}</div>
+                                                    </div>
+                                                    <div className="info-item" style={{gridColumn: '1 / -1'}}>
+                                                        <label>Email</label>
+                                                        <div className="value">{selectedPatient.email || 'N/A'}</div>
+                                                    </div>
+                                                    <div className="info-item" style={{gridColumn: '1 / -1'}}>
+                                                        <label>Address</label>
+                                                        <div className="value">{selectedPatient.address || 'N/A'}</div>
+                                                    </div>
+                                                    <div className="info-item">
+                                                        <label>Emergency Contact</label>
+                                                        <div className="value">{selectedPatient.emergencyContact || 'N/A'}</div>
+                                                    </div>
+                                                    <div className="info-item">
+                                                        <label>Emergency Phone</label>
+                                                        <div className="value">{selectedPatient.emergencyPhone || 'N/A'}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="form-section">
+                                                <h2>Current Medical Information</h2>
+                                                {selectedPatient.allergies && (
+                                                    <div className="info-item" style={{marginBottom: '15px', borderLeftColor: '#e74c3c'}}>
+                                                        <label>⚠️ ALLERGIES</label>
+                                                        <div className="value" style={{color: '#e74c3c'}}>{selectedPatient.allergies}</div>
+                                                    </div>
+                                                )}
+                                                <div className="info-item" style={{marginBottom: '15px'}}>
+                                                    <label>Current Medications</label>
+                                                    <div className="value">{selectedPatient.currentMedications || 'None'}</div>
+                                                </div>
+                                                <div className="info-item">
+                                                    <label>Chronic Conditions</label>
+                                                    <div className="value">{selectedPatient.chronicConditions || 'None'}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {activeTab === 'appointments' && (
+                                        <div>
+                                            <div className="form-section">
+                                                <h2>Schedule New Appointment</h2>
+                                                <form onSubmit={addAppointment}>
+                                                    <div className="form-grid">
+                                                        <div className="form-field">
+                                                            <label>Date *</label>
+                                                            <input
+                                                                type="date"
+                                                                value={appointmentForm.date}
+                                                                onChange={(e) => setAppointmentForm({...appointmentForm, date: e.target.value})}
+                                                                required
+                                                                min={new Date().toISOString().split('T')[0]}
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Time *</label>
+                                                            <input
+                                                                type="time"
+                                                                value={appointmentForm.time}
+                                                                onChange={(e) => setAppointmentForm({...appointmentForm, time: e.target.value})}
+                                                                required
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Appointment Type *</label>
+                                                            <select
+                                                                value={appointmentForm.type}
+                                                                onChange={(e) => setAppointmentForm({...appointmentForm, type: e.target.value})}
+                                                                required
+                                                            >
+                                                                <option value="">Select type...</option>
+                                                                <option value="General Checkup">General Checkup</option>
+                                                                <option value="Follow-up">Follow-up</option>
+                                                                <option value="Consultation">Consultation</option>
+                                                                <option value="Lab Work">Lab Work</option>
+                                                                <option value="Vaccination">Vaccination</option>
+                                                                <option value="Emergency">Emergency</option>
+                                                                <option value="Other">Other</option>
+                                                            </select>
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Status</label>
+                                                            <select
+                                                                value={appointmentForm.status}
+                                                                onChange={(e) => setAppointmentForm({...appointmentForm, status: e.target.value})}
+                                                            >
+                                                                <option value="scheduled">Scheduled</option>
+                                                                <option value="confirmed">Confirmed</option>
+                                                            </select>
+                                                        </div>
+                                                        <div className="form-field full-width">
+                                                            <label>Reason for Visit *</label>
+                                                            <textarea
+                                                                value={appointmentForm.reason}
+                                                                onChange={(e) => setAppointmentForm({...appointmentForm, reason: e.target.value})}
+                                                                placeholder="Describe the reason for this appointment..."
+                                                                required
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" className="btn btn-success" style={{marginTop: '15px'}}>
+                                                        📅 Schedule Appointment
+                                                    </button>
+                                                </form>
+                                            </div>
+
+                                            <div className="form-section">
+                                                <h2>Appointment Schedule</h2>
+                                                {selectedPatient.appointments && selectedPatient.appointments.length > 0 ? (
+                                                    selectedPatient.appointments
+                                                        .slice()
+                                                        .sort((a, b) => new Date(a.date + ' ' + a.time) - new Date(b.date + ' ' + b.time))
+                                                        .map(appointment => {
+                                                            const appointmentDateTime = new Date(appointment.date + ' ' + appointment.time);
+                                                            const isPast = appointmentDateTime < new Date();
+                                                            
+                                                            return (
+                                                                <div key={appointment.id} style={{
+                                                                    background: 'white',
+                                                                    padding: '20px',
+                                                                    borderRadius: '12px',
+                                                                    borderLeft: `4px solid ${
+                                                                        appointment.status === 'completed' ? '#27ae60' :
+                                                                        appointment.status === 'cancelled' ? '#e74c3c' :
+                                                                        appointment.status === 'confirmed' ? '#3498db' :
+                                                                        isPast ? '#95a5a6' : '#f39c12'
+                                                                    }`,
+                                                                    marginBottom: '15px',
+                                                                    opacity: isPast && appointment.status === 'scheduled' ? 0.7 : 1
+                                                                }}>
+                                                                    <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '15px'}}>
+                                                                        <div>
+                                                                            <div style={{fontSize: '1.2em', fontWeight: '600', color: '#2c3e50', marginBottom: '5px'}}>
+                                                                                {appointment.type}
+                                                                            </div>
+                                                                            <div style={{color: '#7f8c8d', fontSize: '0.95em'}}>
+                                                                                📅 {new Date(appointment.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                                                                                {' '}🕐 {appointment.time}
+                                                                            </div>
+                                                                        </div>
+                                                                        <div style={{
+                                                                            padding: '5px 12px',
+                                                                            borderRadius: '20px',
+                                                                            fontSize: '0.85em',
+                                                                            fontWeight: '600',
+                                                                            background: 
+                                                                                appointment.status === 'completed' ? '#d4edda' :
+                                                                                appointment.status === 'cancelled' ? '#f8d7da' :
+                                                                                appointment.status === 'confirmed' ? '#d1ecf1' :
+                                                                                '#fff3cd',
+                                                                            color: 
+                                                                                appointment.status === 'completed' ? '#155724' :
+                                                                                appointment.status === 'cancelled' ? '#721c24' :
+                                                                                appointment.status === 'confirmed' ? '#0c5460' :
+                                                                                '#856404'
+                                                                        }}>
+                                                                            {appointment.status.toUpperCase()}
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <div style={{padding: '12px', background: '#f8f9fa', borderRadius: '8px', marginBottom: '15px'}}>
+                                                                        <strong>Reason:</strong> {appointment.reason}
+                                                                    </div>
+                                                                    
+                                                                    <div style={{display: 'flex', gap: '10px', flexWrap: 'wrap'}}>
+                                                                        {appointment.status === 'scheduled' && (
+                                                                            <>
+                                                                                <button 
+                                                                                    className="btn btn-primary"
+                                                                                    onClick={() => updateAppointmentStatus(appointment.id, 'confirmed')}
+                                                                                    style={{fontSize: '0.9em', padding: '8px 16px'}}
+                                                                                >
+                                                                                    ✓ Confirm
+                                                                                </button>
+                                                                                <button 
+                                                                                    className="btn btn-danger"
+                                                                                    onClick={() => updateAppointmentStatus(appointment.id, 'cancelled')}
+                                                                                    style={{fontSize: '0.9em', padding: '8px 16px'}}
+                                                                                >
+                                                                                    ✕ Cancel
+                                                                                </button>
+                                                                            </>
+                                                                        )}
+                                                                        {appointment.status === 'confirmed' && (
+                                                                            <>
+                                                                                <button 
+                                                                                    className="btn btn-success"
+                                                                                    onClick={() => updateAppointmentStatus(appointment.id, 'completed')}
+                                                                                    style={{fontSize: '0.9em', padding: '8px 16px'}}
+                                                                                >
+                                                                                    ✓ Mark Complete
+                                                                                </button>
+                                                                                <button 
+                                                                                    className="btn btn-danger"
+                                                                                    onClick={() => updateAppointmentStatus(appointment.id, 'cancelled')}
+                                                                                    style={{fontSize: '0.9em', padding: '8px 16px'}}
+                                                                                >
+                                                                                    ✕ Cancel
+                                                                                </button>
+                                                                            </>
+                                                                        )}
+                                                                    </div>
+                                                                    
+                                                                    <div style={{marginTop: '15px', paddingTop: '15px', borderTop: '1px solid #ecf0f1', color: '#7f8c8d', fontSize: '0.85em'}}>
+                                                                        Scheduled by {appointment.scheduledBy} on {new Date(appointment.createdDate).toLocaleDateString()}
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        })
+                                                ) : (
+                                                    <p style={{textAlign: 'center', color: '#95a5a6', padding: '40px'}}>
+                                                        No appointments scheduled
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {activeTab === 'prescriptions' && (
+                                        <div>
+                                            <div className="form-section">
+                                                <h2>Add New Prescription</h2>
+                                                <form onSubmit={addPrescription}>
+                                                    <div className="form-grid">
+                                                        <div className="form-field">
+                                                            <label>Medication Name *</label>
+                                                            <input
+                                                                type="text"
+                                                                value={prescriptionForm.medication}
+                                                                onChange={(e) => setPrescriptionForm({...prescriptionForm, medication: e.target.value})}
+                                                                required
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Dosage *</label>
+                                                            <input
+                                                                type="text"
+                                                                value={prescriptionForm.dosage}
+                                                                onChange={(e) => setPrescriptionForm({...prescriptionForm, dosage: e.target.value})}
+                                                                placeholder="e.g., 500mg"
+                                                                required
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Frequency *</label>
+                                                            <input
+                                                                type="text"
+                                                                value={prescriptionForm.frequency}
+                                                                onChange={(e) => setPrescriptionForm({...prescriptionForm, frequency: e.target.value})}
+                                                                placeholder="e.g., Twice daily"
+                                                                required
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Duration</label>
+                                                            <input
+                                                                type="text"
+                                                                value={prescriptionForm.duration}
+                                                                onChange={(e) => setPrescriptionForm({...prescriptionForm, duration: e.target.value})}
+                                                                placeholder="e.g., 30 days"
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Refills</label>
+                                                            <input
+                                                                type="number"
+                                                                value={prescriptionForm.refills}
+                                                                onChange={(e) => setPrescriptionForm({...prescriptionForm, refills: e.target.value})}
+                                                                min="0"
+                                                            />
+                                                        </div>
+                                                        <div className="form-field full-width">
+                                                            <label>Special Instructions</label>
+                                                            <textarea
+                                                                value={prescriptionForm.instructions}
+                                                                onChange={(e) => setPrescriptionForm({...prescriptionForm, instructions: e.target.value})}
+                                                                placeholder="e.g., Take with food"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" className="btn btn-success" style={{marginTop: '15px'}}>
+                                                        ➕ Add Prescription
+                                                    </button>
+                                                </form>
+                                            </div>
+
+                                            <div className="form-section">
+                                                <h2>Active Prescriptions</h2>
+                                                {selectedPatient.prescriptions && selectedPatient.prescriptions.length > 0 ? (
+                                                    selectedPatient.prescriptions.slice().reverse().map(prescription => (
+                                                        <div key={prescription.id} className="prescription-card">
+                                                            <div className="prescription-header">
+                                                                <div className="prescription-medication">
+                                                                    💊 {prescription.medication}
+                                                                </div>
+                                                                <div className={`prescription-status ${prescription.status}`}>
+                                                                    {prescription.status.toUpperCase()}
+                                                                </div>
+                                                            </div>
+                                                            <div className="prescription-details">
+                                                                <div className="prescription-detail">
+                                                                    <label>Dosage</label>
+                                                                    <div className="value">{prescription.dosage}</div>
+                                                                </div>
+                                                                <div className="prescription-detail">
+                                                                    <label>Frequency</label>
+                                                                    <div className="value">{prescription.frequency}</div>
+                                                                </div>
+                                                                <div className="prescription-detail">
+                                                                    <label>Duration</label>
+                                                                    <div className="value">{prescription.duration || 'N/A'}</div>
+                                                                </div>
+                                                                <div className="prescription-detail">
+                                                                    <label>Refills</label>
+                                                                    <div className="value">{prescription.refills || '0'}</div>
+                                                                </div>
+                                                            </div>
+                                                            {prescription.instructions && (
+                                                                <div style={{marginTop: '15px', padding: '12px', background: '#f8f9fa', borderRadius: '8px'}}>
+                                                                    <strong>Instructions:</strong> {prescription.instructions}
+                                                                </div>
+                                                            )}
+                                                            <div style={{marginTop: '15px', color: '#7f8c8d', fontSize: '0.85em'}}>
+                                                                Prescribed by {prescription.prescribedBy} on {new Date(prescription.prescribedDate).toLocaleDateString()}
+                                                                {prescription.pharmacy && <span> • Pharmacy: {prescription.pharmacy}</span>}
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <p style={{textAlign: 'center', color: '#95a5a6', padding: '40px'}}>
+                                                        No prescriptions on file
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {activeTab === 'pharmacy' && (
+                                        <div>
+                                            <div className="form-section">
+                                                <h2>Add Pharmacy</h2>
+                                                <form onSubmit={addPharmacy}>
+                                                    <div className="form-grid">
+                                                        <div className="form-field full-width">
+                                                            <label>Pharmacy Name *</label>
+                                                            <input
+                                                                type="text"
+                                                                value={pharmacyForm.name}
+                                                                onChange={(e) => setPharmacyForm({...pharmacyForm, name: e.target.value})}
+                                                                required
+                                                            />
+                                                        </div>
+                                                        <div className="form-field full-width">
+                                                            <label>Address *</label>
+                                                            <input
+                                                                type="text"
+                                                                value={pharmacyForm.address}
+                                                                onChange={(e) => setPharmacyForm({...pharmacyForm, address: e.target.value})}
+                                                                required
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Phone *</label>
+                                                            <input
+                                                                type="tel"
+                                                                value={pharmacyForm.phone}
+                                                                onChange={(e) => setPharmacyForm({...pharmacyForm, phone: e.target.value})}
+                                                                required
+                                                            />
+                                                        </div>
+                                                        <div className="form-field">
+                                                            <label>Fax</label>
+                                                            <input
+                                                                type="tel"
+                                                                value={pharmacyForm.fax}
+                                                                onChange={(e) => setPharmacyForm({...pharmacyForm, fax: e.target.value})}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" className="btn btn-success" style={{marginTop: '15px'}}>
+                                                        ➕ Add Pharmacy
+                                                    </button>
+                                                </form>
+                                            </div>
+
+                                            <div className="form-section">
+                                                <h2>Registered Pharmacies</h2>
+                                                {selectedPatient.pharmacies && selectedPatient.pharmacies.length > 0 ? (
+                                                    selectedPatient.pharmacies.map(pharmacy => (
+                                                        <div key={pharmacy.id} className="pharmacy-card">
+                                                            <div className="pharmacy-name">
+                                                                🏪 {pharmacy.name}
+                                                                {selectedPatient.preferredPharmacy === pharmacy.name && (
+                                                                    <span style={{marginLeft: '10px', padding: '5px 12px', background: '#d4edda', color: '#155724', borderRadius: '20px', fontSize: '0.75em', fontWeight: '600'}}>
+                                                                        PREFERRED
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <div className="pharmacy-details">
+                                                                <p>📍 {pharmacy.address}</p>
+                                                                <p>📞 Phone: {pharmacy.phone}</p>
+                                                                {pharmacy.fax && <p>📠 Fax: {pharmacy.fax}</p>}
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <p style={{textAlign: 'center', color: '#95a5a6', padding: '40px'}}>
+                                                        No pharmacies registered
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {activeTab === 'history' && (
+                                        <div>
+                                            <div className="form-section">
+                                                <h2>Complete Medical History</h2>
+                                                
+                                                <div className="history-section">
+                                                    <h3>🏥 Past Surgeries & Procedures</h3>
+                                                    <div className="history-list">
+                                                        {selectedPatient.medicalHistory?.surgeries?.length > 0 ? (
+                                                            selectedPatient.medicalHistory.surgeries.map((surgery, index) => (
+                                                                <div key={index} className="history-item">
+                                                                    <span>{surgery.name}</span>
+                                                                    <span className="date">{surgery.date}</span>
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <p style={{color: '#95a5a6', padding: '20px', textAlign: 'center'}}>No surgical history recorded</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div className="history-section">
+                                                    <h3>💉 Immunization Records</h3>
+                                                    <div className="history-list">
+                                                        {selectedPatient.medicalHistory?.immunizations?.length > 0 ? (
+                                                            selectedPatient.medicalHistory.immunizations.map((vaccine, index) => (
+                                                                <div key={index} className="history-item">
+                                                                    <span>{vaccine.name}</span>
+                                                                    <span className="date">{vaccine.date}</span>
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <p style={{color: '#95a5a6', padding: '20px', textAlign: 'center'}}>No immunization records</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div className="history-section">
+                                                    <h3>👨‍👩‍👧‍👦 Family Medical History</h3>
+                                                    <div className="history-list">
+                                                        {selectedPatient.medicalHistory?.familyHistory?.length > 0 ? (
+                                                            selectedPatient.medicalHistory.familyHistory.map((history, index) => (
+                                                                <div key={index} className="history-item">
+                                                                    <span>{history.relation}: {history.condition}</span>
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <p style={{color: '#95a5a6', padding: '20px', textAlign: 'center'}}>No family history recorded</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div className="info-item" style={{marginTop: '20px'}}>
+                                                    <label>Current Chronic Conditions</label>
+                                                    <div className="value">{selectedPatient.chronicConditions || 'None reported'}</div>
+                                                </div>
+
+                                                <div className="info-item">
+                                                    <label>Known Allergies</label>
+                                                    <div className="value" style={{color: selectedPatient.allergies ? '#e74c3c' : '#2c3e50'}}>
+                                                        {selectedPatient.allergies || 'No known allergies'}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {activeTab === 'visits' && (
+                                        <div>
+                                            <div className="form-section">
+                                                <h2>Add Visit Record</h2>
+                                                <div className="form-grid">
+                                                    <div className="form-field">
+                                                        <label>Chief Complaint</label>
+                                                        <input type="text" name="chiefComplaint" value={formData.chiefComplaint} onChange={handleInputChange} />
+                                                    </div>
+                                                    <div className="form-field">
+                                                        <label>Follow-up Date</label>
+                                                        <input type="date" name="followUpDate" value={formData.followUpDate} onChange={handleInputChange} />
+                                                    </div>
+                                                    <div className="form-field full-width">
+                                                        <label>Diagnosis</label>
+                                                        <input type="text" name="diagnosis" value={formData.diagnosis} onChange={handleInputChange} />
+                                                    </div>
+                                                    <div className="form-field full-width">
+                                                        <label>Treatment Plan</label>
+                                                        <textarea name="treatment" value={formData.treatment} onChange={handleInputChange} />
+                                                    </div>
+                                                    <div className="form-field full-width">
+                                                        <label>Prescription Notes</label>
+                                                        <textarea name="prescription" value={formData.prescription} onChange={handleInputChange} />
+                                                    </div>
+                                                    <div className="form-field full-width">
+                                                        <label>Additional Notes</label>
+                                                        <textarea name="notes" value={formData.notes} onChange={handleInputChange} />
+                                                    </div>
+                                                </div>
+                                                <button className="btn btn-success" onClick={addMedicalRecord} style={{marginTop: '15px'}}>
+                                                    ➕ Add Record
+                                                </button>
+                                            </div>
+
+                                            <div className="form-section">
+                                                <h2>Visit History</h2>
+                                                {selectedPatient.medicalRecords && selectedPatient.medicalRecords.length > 0 ? (
+                                                    selectedPatient.medicalRecords.slice().reverse().map(record => (
+                                                        <div key={record.id} className="medical-record-item">
+                                                            <h4>{record.diagnosis || 'General Visit'}</h4>
+                                                            <div className="record-meta">
+                                                                📅 {new Date(record.date).toLocaleString()} | Recorded by: {record.recordedBy}
+                                                            </div>
+                                                            {record.chiefComplaint && <p><strong>Chief Complaint:</strong> {record.chiefComplaint}</p>}
+                                                            {record.treatment && <p><strong>Treatment:</strong> {record.treatment}</p>}
+                                                            {record.prescription && <p><strong>Prescription:</strong> {record.prescription}</p>}
+                                                            {record.notes && <p><strong>Notes:</strong> {record.notes}</p>}
+                                                            {record.followUpDate && (
+                                                                <p><strong>Follow-up:</strong> {new Date(record.followUpDate).toLocaleDateString()}</p>
+                                                            )}
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <p style={{textAlign: 'center', color: '#95a5a6', padding: '40px'}}>
+                                                        No visit records yet
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* User Management Modal */}
+                    <div className={`modal ${showUserModal ? 'active' : ''}`}>
+                        <div className="modal-content">
+                            <span className="modal-close" onClick={() => setShowUserModal(false)}>×</span>
+                            <h2>👥 User Management</h2>
+                            
+                            <div style={{marginBottom: '30px'}}>
+                                <h3 style={{marginBottom: '15px'}}>Add New User</h3>
+                                <form onSubmit={addNewUser}>
+                                    <div className="form-grid">
+                                        <div className="form-field">
+                                            <label>Username</label>
+                                            <input 
+                                                type="text" 
+                                                value={newUserForm.username}
+                                                onChange={(e) => setNewUserForm({...newUserForm, username: e.target.value})}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="form-field">
+                                            <label>Password</label>
+                                            <input 
+                                                type="password" 
+                                                value={newUserForm.password}
+                                                onChange={(e) => setNewUserForm({...newUserForm, password: e.target.value})}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="form-field">
+                                            <label>Full Name</label>
+                                            <input 
+                                                type="text" 
+                                                value={newUserForm.name}
+                                                onChange={(e) => setNewUserForm({...newUserForm, name: e.target.value})}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="form-field">
+                                            <label>Role</label>
+                                            <select 
+                                                value={newUserForm.role}
+                                                onChange={(e) => setNewUserForm({...newUserForm, role: e.target.value})}
+                                            >
+                                                <option value="staff">Staff</option>
+                                                <option value="admin">Admin</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button type="submit" className="btn btn-success" style={{marginTop: '15px'}}>
+                                        ➕ Add User
+                                    </button>
+                                </form>
+                            </div>
+
+                            <div className="user-management-list">
+                                <h3 style={{marginBottom: '15px'}}>Current Users ({users.length})</h3>
+                                {users.map(user => (
+                                    <div key={user.username} className={`user-item ${user.role}`}>
+                                        <div className="user-item-info">
+                                            <h4>{user.name}</h4>
+                                            <p>@{user.username} • {user.role === 'admin' ? '👑 Administrator' : '👤 Staff Member'}</p>
+                                        </div>
+                                        {user.username !== 'admin' && (
+                                            <button 
+                                                className="btn btn-danger"
+                                                onClick={() => deleteUser(user.username)}
+                                            >
+                                                Delete
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {notification && (
+                        <div className={`notification ${notification.type}`}>
+                            {notification.message}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
